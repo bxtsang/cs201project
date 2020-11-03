@@ -1,9 +1,9 @@
 public class Address {
     private double lon;
     private double lat;
-    private int clusterNumber;
+    private Integer clusterNumber;
 
-    public Address(double lon, double lat, int clusterNumber){
+    public Address(double lon, double lat, Integer clusterNumber){
         this.lon = lon;
         this.lat = lat;
         this.clusterNumber = clusterNumber;
@@ -18,7 +18,7 @@ public class Address {
     }
 
 
-    public int getClusterNumber(){
+    public Integer getClusterNumber(){
         return clusterNumber;
     }
 
