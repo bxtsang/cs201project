@@ -9,7 +9,7 @@ public class TaxiData {
     private static final String endpoint = "https://api.data.gov.sg/v1/transport/taxi-availability";
     private static final Gson gson = new Gson();
 
-    public static void getData() throws Exception {
+    public static Response getData() throws Exception {
         URL url = new URL(endpoint);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
@@ -27,14 +27,6 @@ public class TaxiData {
         con.disconnect();
 
         Response response = gson.fromJson(String.valueOf(content), Response.class);
+        return response;
     }
-
-    public static void main(String[] args) {
-        try {
-            getData();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
