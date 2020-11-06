@@ -1,0 +1,1 @@
+javac -d target -cp libraries/*;sources sources/TaxiData.java
