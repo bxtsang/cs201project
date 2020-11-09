@@ -2,7 +2,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class FindClusters {
+public class AddressUtilities {
+
+    //Given a Taxi and the reference points, iterate through the entire list of reference points to find the minimum value
+    //This method will set the Taxi's Zone
+    public static void findNearestZone(Taxi aTaxi, HashMap<Integer, Address> referencePoints){
+
+    }
+
+    //This method calculates the distance between two points - a taxi and a reference point
+    public static double calculateDistance (double lon1, double lat1, double lon2, double lat2){
+        
+        return 0;
+    }
 
     /**
      * This method will return the mean location of all the points within a cluster to be used as the cluster's reference/representative point
