@@ -22,7 +22,10 @@ public class Address {
         return clusterNumber;
     }
 
-
+    @Override
+    public String toString(){
+        return "Lon: " + getLon() + "\nLat:" + getLat() + "\nZone: " + getClusterNumber()+ "\n";
+    }
 
 
 }
