@@ -5,14 +5,14 @@ import java.util.Collection;
 public class Zone {
     private Collection<Taxi> taxis;
     private int demand;
-    private double refereceLatitude;
-    private double referenceLongtitude;
-    private boolean isProceesed;
+    private double referenceLatitude;
+    private double referenceLongitude;
+    private boolean isProcessed;
 
-    public boolean isDeficit() {
+    public int getDeficit() {
         if (taxis.size() < demand) {
-            return true;
+            return demand - taxis.size();
         }
-        return false;
+        return 0;
     }
 }
