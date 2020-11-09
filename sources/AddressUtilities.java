@@ -1,19 +1,38 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.lang.Math;
+import data.Taxi;
 
 public class AddressUtilities {
 
     //Given a Taxi and the reference points, iterate through the entire list of reference points to find the minimum value
     //This method will set the Taxi's Zone
     public static void findNearestZone(Taxi aTaxi, HashMap<Integer, Address> referencePoints){
-
+        double shortestDistance = 10000.0;
+        Integer clusterNum = 0;
+        for (Integer i: referencePoints.keySet()){
+            Address reference = referencePoints.get(i);
+            double distance = calculateDistance(aTaxi.getLon(), aTaxi.getLat(), reference.getLon(), reference.getLat());
+            if (distance < shortestDistance){
+                shortestDistance = distance;
+                clusterNum = i;
+            }
+        }
+        // System.out.println("Shortest Distance: " + shortestDistance);
+        aTaxi.setClusterNum(clusterNum);
     }
 
     //This method calculates the distance between two points - a taxi and a reference point
     public static double calculateDistance (double lon1, double lat1, double lon2, double lat2){
-        
-        return 0;
+        //Straight line distance - SQRT ( (x1 - x2)^2 + (y1 - y2)^2)
+        double param1 = Math.pow(lon2 - lon1, 2);
+        double param2 = Math.pow(lat2 - lat1, 2);
+        double output = Math.sqrt(param1 + param2);
+        // System.out.println("PARAM1: " + param1);
+        // System.out.println("PARAM2: " + param2);
+        // System.out.println(output);
+        return Math.sqrt(Math.pow(lon2 - lon1, 2) + Math.pow(lat2 - lat1, 2));
     }
 
     /**
