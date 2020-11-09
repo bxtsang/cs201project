@@ -44,6 +44,7 @@ public class Taxi {
 
     public boolean checkIfAssigned() {
         return this.isAssigned;
+    }
 
     public double getLat(){
         return latitude;
@@ -51,10 +52,6 @@ public class Taxi {
 
     public double getLon(){
         return longitude;
-    }
-
-    public Zone getZone(){
-        return zone;
     }
 
     public boolean isAssigned(){
