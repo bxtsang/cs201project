@@ -1,4 +1,5 @@
 import data.Taxi;
+import data.Zone;
 import jdk.dynalink.beans.StaticClass;
 
 import java.util.List;
@@ -27,9 +28,9 @@ public class DirectRouting {
 
         // Fill three lists above 
         for (Zone zone : zonesMock) {
-            if (zone.getDeficit() > 0) {
+            if (zone.getDeficitAmount() > 0) {
                 deficitZones.add(zone);
-            } else if (zone.getDeficit() < 0) {
+            } else if (zone.getDeficitAmount() < 0) {
                 surplusZones.add(zone);
             } else {
                 neutralZones.add(zone);
@@ -40,31 +41,31 @@ public class DirectRouting {
 
     //----------------------Approaches-------------------------------
 
-    // Approach 1:
-    // Go through the list of zones and check if the zones are in surplus or deficit
-    // If two zones are both in surplus and deficit, reallocate, then remove them from the list
-    // Even if they're still in surplus / deficit since the numbers are brought closer to 0
-    // At each pass, check if the zones are surplus / neutral and stop loop when they are all surplus / neutral
-    private static List<Zone> alternateRecursiveInefficient(List<Zone> zonesMock) {
+    // // Approach 1:
+    // // Go through the list of zones and check if the zones are in surplus or deficit
+    // // If two zones are both in surplus and deficit, reallocate, then remove them from the list
+    // // Even if they're still in surplus / deficit since the numbers are brought closer to 0
+    // // At each pass, check if the zones are surplus / neutral and stop loop when they are all surplus / neutral
+    // private static List<Zone> alternateRecursiveInefficient(List<Zone> zonesMock) {
 
-        // O(n)
-        if (allSurplusOrNeutral(zonesMock)) {
-            return zonesMock;
-        }
+    //     // O(n)
+    //     if (allSurplusOrNeutral(zonesMock)) {
+    //         return zonesMock;
+    //     }
 
-        // O(n^2)
-        for (Zone zone : zonesMock) {
-            for (Zone zone2 : zonesMock) {
-                if (isSurplus(zone) && isDeficit(zone2)) {
-                    reallocateTwoZones(zone, zone2);
-                    zonesMock.remove(zone);
-                    zonesMock.remove(zone2);
-                }
-            }
-        }
+    //     // O(n^2)
+    //     for (Zone zone : zonesMock) {
+    //         for (Zone zone2 : zonesMock) {
+    //             if (isSurplus(zone) && isDeficit(zone2)) {
+    //                 reallocateTwoZones(zone, zone2);
+    //                 zonesMock.remove(zone);
+    //                 zonesMock.remove(zone2);
+    //             }
+    //         }
+    //     }
 
-        alternateRecursiveInefficient(zonesMock);
-    }
+    //     alternateRecursiveInefficient(zonesMock);
+    // }
 
     // Approach 2:
     // For each zone in surplus, store the quantity of surplus with the zone id in a hashmap
@@ -74,19 +75,19 @@ public class DirectRouting {
         Map<Integer, Integer> surplusMap = new HashMap<>();
         int idCount = 0;
         for (Zone zone : surplusZones) {
-            surplusMap.put(idCount++, zone.getDeficit());
+            surplusMap.put(idCount++, Math.abs(zone.getDeficitAmount()));
         }
 
         return surplusMap;
     }
 
     private void alternateUsesMap(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
-        Map<Integer, Integer> surplusMap = mapSurplus();
+        Map<Integer, Integer> surplusMap = mapSurplus(surplusZones);
 
         for (Zone deficitZone : deficitZones) {
-            int deficit = deficitZone.getDeficit();
+            int deficit = deficitZone.getDeficitAmount();
 
-            for (Entry<Integer, Integer> entry : surplusMap.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : surplusMap.entrySet()) {
                 if (entry.getValue() < deficit) {
                     int taxisToMove = entry.getValue();
                     // move this number of taxis from zone entry.getKey() to deficitZone
@@ -120,12 +121,12 @@ public class DirectRouting {
     }
 
 
-    private static reallocate(Zone zone, List<Zone> surplusZones) {
-        int currentDeficit = zone.getDeficit();
+    private static void reallocate(Zone zone, List<Zone> surplusZones) {
+        int currentDeficit = zone.getDeficitAmount();
 
         for (Zone surplusZone : surplusZones) {
-            if (Math.abs(surplusZone.getDeficit()) > currentDeficit) {
-                int taxisToMove = Math.abs(surplusZone.getDeficit()) - currentDeficit;
+            if (Math.abs(surplusZone.getDeficitAmount()) > currentDeficit) {
+                int taxisToMove = Math.abs(surplusZone.getDeficitAmount()) - currentDeficit;
                 // move taxi
                 // subtract currentDeficit from surplusZone's surplus
             }
@@ -178,21 +179,21 @@ public class DirectRouting {
         return zones;
     }
 
-    private static HashMap<Integer, Address> getReferencePoints() {
+    // private static HashMap<Integer, Address> getReferencePoints() {
 
-        //Load all supporting dataset into arrayList
-        ArrayList<Address> supportingAddresses = new ArrayList<>();
-        FindClusters.loadAddresses(supportingAddresses);
+    //     //Load all supporting dataset into arrayList
+    //     ArrayList<Address> supportingAddresses = new ArrayList<>();
+    //     FindClusters.loadAddresses(supportingAddresses);
 
-        //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
-        HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
-        clusteredAddresses = FindClusters.initHashMap(supportingAddresses);
-        HashMap<Integer, Address> referencePoints = new HashMap<>();
-        for (Integer i : clusteredAddresses.keySet()){
-            referencePoints.put(i, FindClusters.findReferencePoint(i, clusteredAddresses));
-        }
+    //     //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
+    //     HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
+    //     clusteredAddresses = FindClusters.initHashMap(supportingAddresses);
+    //     HashMap<Integer, Address> referencePoints = new HashMap<>();
+    //     for (Integer i : clusteredAddresses.keySet()){
+    //         referencePoints.put(i, FindClusters.findReferencePoint(i, clusteredAddresses));
+    //     }
 
-        return referencePoints;
-    }
+    //     return referencePoints;
+    // }
 
 }
