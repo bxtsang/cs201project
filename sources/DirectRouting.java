@@ -20,11 +20,8 @@ public class DirectRouting {
     public static void main(String[] args) {
 
         // Get mock zones
+        // will be changed later to fetch real data
         List<Zone> zonesMock = mockTaxiData();
-
-        for (Zone zone : zonesMock) {
-            System.out.println(zone.getDemand());
-        }
 
         List<Zone> deficitZones = new ArrayList<>();
         List<Zone> surplusZones = new ArrayList<>();
@@ -43,35 +40,9 @@ public class DirectRouting {
 
     }
 
-    //----------------------Approaches-------------------------------
+    //----------------------Approach-------------------------------
 
-    // // Approach 1:
-    // // Go through the list of zones and check if the zones are in surplus or deficit
-    // // If two zones are both in surplus and deficit, reallocate, then remove them from the list
-    // // Even if they're still in surplus / deficit since the numbers are brought closer to 0
-    // // At each pass, check if the zones are surplus / neutral and stop loop when they are all surplus / neutral
-    // private static List<Zone> alternateRecursiveInefficient(List<Zone> zonesMock) {
-
-    //     // O(n)
-    //     if (allSurplusOrNeutral(zonesMock)) {
-    //         return zonesMock;
-    //     }
-
-    //     // O(n^2)
-    //     for (Zone zone : zonesMock) {
-    //         for (Zone zone2 : zonesMock) {
-    //             if (isSurplus(zone) && isDeficit(zone2)) {
-    //                 reallocateTwoZones(zone, zone2);
-    //                 zonesMock.remove(zone);
-    //                 zonesMock.remove(zone2);
-    //             }
-    //         }
-    //     }
-
-    //     alternateRecursiveInefficient(zonesMock);
-    // }
-
-    // Approach 2:
+    // Approach:
     // For each zone in surplus, store the quantity of surplus with the zone id in a hashmap
     // For each zone in deficit, zone can 'shop' for surplus
     // Amount taken is subtracted accordingly from the surplus zones
