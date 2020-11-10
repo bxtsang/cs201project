@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.*;
 
 public class TaxiRouting {
+    private Map<Zone, Taxi> zoneTaxiHashMap = new HashMap<>();
+
     public static void main(String[] args) {
         HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>(); 
 

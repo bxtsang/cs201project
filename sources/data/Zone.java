@@ -1,10 +1,12 @@
 package data;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Zone {
-    private Collection<Taxi> taxis;
+    private Set<Taxi> taxis = new HashSet<>();
     private int demand;
     private double referenceLatitude;
     private double referenceLongitude;
@@ -25,11 +27,11 @@ public class Zone {
         this.demand = demand;
     }
 
-    public void setTaxis(Collection<Taxi> taxis) {
+    public void setTaxis(Set<Taxi> taxis) {
         this.taxis = taxis;
     }
 
-    public Collection<Taxi> getTaxis() {
+    public Set<Taxi> getTaxis() {
         return this.taxis;
     }
 
@@ -39,6 +41,10 @@ public class Zone {
 
     public void addTaxi(Taxi taxi) {
         this.taxis.add(taxi);
+    }
+
+    public void setProcessed(boolean processed) {
+        isProcessed = processed;
     }
 
     public int getDeficit() {
