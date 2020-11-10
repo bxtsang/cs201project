@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.HashMap;
+import java.util.*;
 
 public class TaxiRouting {
     public static void main(String[] args) {
@@ -26,7 +27,38 @@ public class TaxiRouting {
             referencePoints.put(i, AddressUtilities.findReferencePoint(i, clusteredAddresses));
         }
 
-        System.out.println(referencePoints);
+        // mock taxi demand for each zone
+        HashMap<Integer, Integer> demand = new HashMap<>();
+        demand.put(1,3042); // no deficit
+        demand.put(2, 1601); // no deficit
+        demand.put(3, 1867); // no deficit
+        demand.put(4,1318); // no deficit
+        demand.put(5,4876); // no deficit
+        demand.put(6,200); // deficit, current count = 187
+        demand.put(7, 1702); // no deficit
+        demand.put(8, 4270); // no deficit
+        demand.put(9, 2247); // no deficit
+        demand.put(10, 9790); // no deficit
+        demand.put(11, 5942); // no deficit
+        demand.put(12, 2746); // no deficit
+        demand.put(13, 4888); // no deficit
+        demand.put(14, 8417); // no deficit
+        demand.put(15, 10000); // oversupply, current count = 14002
+        demand.put(16, 7896); // no deficit
+        demand.put(17, 2503); // no deficit
+        demand.put(18, 3448); // no deficit
+        demand.put(19, 17000); // oversupply, current count = 17535
+        demand.put(20, 7869); // no deficit
+        demand.put(21, 4611); // no deficit
+        demand.put(22, 7499); // no deficit
+        demand.put(23, 6263); // no deficit
+        demand.put(24, 400); // deficit, current count = 289
+        demand.put(25, 2883); // no deficit
+        demand.put(26, 3227); // no deficit
+        demand.put(27, 4567); // no deficit
+        demand.put(28, 6150); // no deficit
+
+        // System.out.println(referencePoints);
       
         // -------------------------pre processing-------------------------------------
         // create global collection of taxi, taxiCollection
@@ -34,7 +66,6 @@ public class TaxiRouting {
         if (availableTaxis == null) {
             return;
         }
-
 
         // get all zones (28 zones)
         List<Zone> zones = new ArrayList<>();

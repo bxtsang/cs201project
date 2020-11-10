@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import data.Taxi;
 
 public class AddressUtilities {
 
@@ -81,6 +82,12 @@ public class AddressUtilities {
         }
         //This will be the last cluster addition into our hashmap
         clusteredAddresses.put(currentCluster,tempList);
+
+        // prints all cluster numbers and their taxi counts
+        for (Map.Entry<Integer, List<Address>> e: clusteredAddresses.entrySet()) {
+            System.out.println("cluster number = " + e.getKey() + ", count = " + e.getValue().size());
+        }
+        
         return clusteredAddresses;
     }
 
