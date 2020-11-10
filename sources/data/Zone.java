@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class Zone {
+    private Integer ZoneNumber; 
     private Collection<Taxi> taxis;
     private int demand;
     private double referenceLatitude;
@@ -21,8 +22,18 @@ public class Zone {
         this.demand = demand;
     }
 
+    public Zone(Integer zoneNumber, double referenceLongitude, double referenceLatitude){
+        this.ZoneNumber = zoneNumber;
+        this.referenceLongitude = referenceLongitude;
+        this.referenceLatitude = referenceLatitude;
+    }
+
     public void setDemand(int demand) {
         this.demand = demand;
+    }
+
+    public int getDemand(){
+        return demand;
     }
 
     public void setTaxis(Collection<Taxi> taxis) {
@@ -45,5 +56,9 @@ public class Zone {
         // positive : deficit
         // negative : surplus
         return demand - taxis.size();
+    }
+
+    public Integer getZoneNumber(){
+        return ZoneNumber;
     }
 }

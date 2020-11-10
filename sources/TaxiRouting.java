@@ -67,19 +67,29 @@ public class TaxiRouting {
         if (availableTaxis == null) {
             return;
         }
-
-        //Set clusters for all the taxis
-        for (Taxi t : availableTaxis){
-            AddressUtilities.findNearestZone(t, referencePoints);
-            System.out.println("Taxi ID: " + t.getId() + " is in Cluster #" + t.getClusterNum());
-        }
-
-        // System.out.println(testing.getClusterNum());
-        // AddressUtilities.calculateDistance(103.62432,1.28653,103.847401,1.28378453902038);
-
+        
+        // System.out.println("Data check: Number of taxis: " + availableTaxis.size());
         // get all zones (28 zones)
         List<Zone> zones = new ArrayList<>();
 
+        for (Taxi t : availableTaxis){
+            AddressUtilities.findNearestZone(t, referencePoints);
+            //Set clusters for all the taxis
+            // System.out.println("Taxi ID: " + t.getId() + " is in Cluster #" + t.getClusterNum());
+        }
+
+        //Populate all the zones with taxis - This is only run once by calling updateZones()
+        AddressUtilities.updateZones(zones, referencePoints, availableTaxis, demand);
+        
+        // int counter = 0;
+        for (int i = 0; i < zones.size(); i++){
+            // counter+= zones.get(i).getTaxis().size();
+            System.out.println("Zone # " + zones.get(i).getZoneNumber() + " Has " + zones.get(i).getTaxis().size() + " Taxis and has " 
+            + zones.get(i).getDemand() + " in demand");
+        }
+
+        // Sanity check for data
+        // System.out.println(counter == availableTaxis.size());
         // create a empty queue of zones
         Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<Zone>(28);
 

@@ -1,10 +1,46 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
 import java.lang.Math;
 import data.Taxi;
+import data.Zone;
 
 public class AddressUtilities {
+
+    /**
+     * This method takes in these four parameters, and then updates the list of zones with the zone's reference points, demand and their corresponding list of taxis
+     * @param zones A list of zones to populate
+     * @param referencePoints A HashMap of reference points to update each zone based on its cluster number
+     * @param availableTaxis A list of all available taxis
+     * @param demand A HashMap of key-value pairs of cluster number and their corresponding demands
+     */
+    public static void updateZones(List<Zone> zones, HashMap<Integer, Address> referencePoints, List<Taxi> availableTaxis, 
+        HashMap<Integer, Integer> demand){
+        //For each key in reference points, get all taxis in available taxis belonging to that cluster
+        //Create a list, and along with the reference point, create a Zone
+
+        List<Taxi> taxiList = new ArrayList<>();
+
+        for (Integer i : referencePoints.keySet()){
+            Address reference = referencePoints.get(i);
+            for (Taxi T : availableTaxis){
+                if (T.getClusterNum() == i){
+                    taxiList.add(T);
+                }
+            }
+            Integer demandForZone = demand.get(i);
+
+            Zone newZone = new Zone(i, reference.getLon(), reference.getLat());
+            newZone.setTaxis(taxiList);
+            newZone.setDemand(demandForZone);
+            //Put the demand hashmap as a param for this method and then setDemand here
+            zones.add(newZone);
+            
+            taxiList = new ArrayList<>();
+        }
+
+    }
 
     //Given a Taxi and the reference points, iterate through the entire list of reference points to find the minimum value
     //This method will set the Taxi's Zone
@@ -26,12 +62,7 @@ public class AddressUtilities {
     //This method calculates the distance between two points - a taxi and a reference point
     public static double calculateDistance (double lon1, double lat1, double lon2, double lat2){
         //Straight line distance - SQRT ( (x1 - x2)^2 + (y1 - y2)^2)
-        double param1 = Math.pow(lon2 - lon1, 2);
-        double param2 = Math.pow(lat2 - lat1, 2);
-        double output = Math.sqrt(param1 + param2);
-        // System.out.println("PARAM1: " + param1);
-        // System.out.println("PARAM2: " + param2);
-        // System.out.println(output);
+
         return Math.sqrt(Math.pow(lon2 - lon1, 2) + Math.pow(lat2 - lat1, 2));
     }
 
