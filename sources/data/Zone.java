@@ -11,6 +11,7 @@ public class Zone {
     private double referenceLatitude;
     private double referenceLongitude;
     private boolean isProcessed;
+    private boolean isDeficit;
 
     public Zone(List<Double> coordinates) {
         this.referenceLatitude = coordinates.get(0);
@@ -35,7 +36,7 @@ public class Zone {
         return this.taxis;
     }
 
-    public boolean getIsProcessed() {
+    public boolean isProcessed() {
         return this.isProcessed;
     }
 
@@ -47,9 +48,25 @@ public class Zone {
         isProcessed = processed;
     }
 
-    public int getDeficit() {
+    public boolean contains(Taxi taxi) {
+        return taxis.contains(taxi);
+    }
+
+    public int getDeficitAmount() {
         // positive : deficit
         // negative : surplus
         return demand - taxis.size();
+    }
+
+    public void setDeficit(boolean deficit) {
+        isDeficit = deficit;
+    }
+
+    public boolean isDeficit() {
+        return isDeficit;
+    }
+
+    public void removeTaxi(Taxi taxi) {
+        taxis.remove(taxi);
     }
 }

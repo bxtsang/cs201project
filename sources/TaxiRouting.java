@@ -11,7 +11,10 @@ import java.util.HashMap;
 import java.util.*;
 
 public class TaxiRouting {
-    private Map<Zone, Taxi> zoneTaxiHashMap = new HashMap<>();
+    private static Map<Zone, Taxi> zoneTaxiHashMap = new HashMap<>();
+    private static List<Taxi> availableTaxis = getAvailableTaxis();
+    private static Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<Zone>(28);
+    private static List<Taxi> assignedTaxis = new ArrayList<>();
 
     public static void main(String[] args) {
         HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>(); 
@@ -65,10 +68,7 @@ public class TaxiRouting {
       
         // -------------------------pre processing-------------------------------------
         // create global collection of taxi, taxiCollection
-        List<Taxi> availableTaxis = getAvailableTaxis();
-        if (availableTaxis == null) {
-            return;
-        }
+        availableTaxis = getAvailableTaxis();
 
         //Set clusters for all the taxis
         for (Taxi t : availableTaxis){
@@ -83,12 +83,13 @@ public class TaxiRouting {
         List<Zone> zones = new ArrayList<>();
 
         // create a empty queue of zones
-        Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<Zone>(28);
+
 
         // iterate through zones and call getDeficit() on all of them
         // if getDeficit() > 0, enqueue to queue
         for (Zone zone : zones) {
-            if (zone.getDeficit() > 0) {
+            if (zone.getDeficitAmount() > 0) {
+                zone.setDeficit(true);
                 deficitZonesQueue.add(zone);
             }
         }
@@ -127,5 +128,21 @@ public class TaxiRouting {
 
     public static void process(Zone zone) {
         //dosomething
+        // find closest taxis
+        for (int i = 0; i < zone.getDeficitAmount(); i++) {
+            Taxi closestTaxi = getClosestTaxi(); // implement this, make sure taxis are not from any previously processed zones
+            closestTaxi.setAssignedZone(zone);
+            assignedTaxis.add(closestTaxi);
+
+            Zone originalZone = closestTaxi.getZone();
+            originalZone.removeTaxi(closestTaxi);
+
+            if (!originalZone.isProcessed()) {
+                if (originalZone.getDeficitAmount() > 0) {
+                    originalZone.setDeficit(true);
+                    deficitZonesQueue.add(originalZone);
+                }
+            }
+        }
     }
 }
