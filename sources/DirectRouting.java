@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+import data.*;
+=======
 import data.Taxi;
 import data.Zone;
+>>>>>>> 50764c10facc7edafe67263e85c5a2d3f80710e9
 import jdk.dynalink.beans.StaticClass;
 
 import java.util.List;
@@ -43,6 +47,16 @@ public class DirectRouting {
 
     }
 
+    public static void categoriseEachZone(Zone zone, List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+        if (zone.getDeficitAmount() > 0) {
+            deficitZones.add(zone);
+        } else if (zone.getDeficitAmount() < 0) {
+            surplusZones.add(zone);
+        } else {
+            neutralZones.add(zone);
+        }
+    }
+
     //----------------------Approaches-------------------------------
 
     // // Approach 1:
@@ -70,6 +84,10 @@ public class DirectRouting {
 
     //     alternateRecursiveInefficient(zonesMock);
     // }
+
+    public static boolean isSurplusAndDeficitPair(Zone zone, Zone zone2) {
+        return isSurplus(zone) && isDeficit(zone2);
+    }
 
     // Approach 2:
     // For each zone in surplus, store the quantity of surplus with the zone id in a hashmap
