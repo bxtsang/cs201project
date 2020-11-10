@@ -22,6 +22,10 @@ public class DirectRouting {
         // Get mock zones
         List<Zone> zonesMock = mockTaxiData();
 
+        for (Zone zone : zonesMock) {
+            System.out.println(zone.getDemand());
+        }
+
         List<Zone> deficitZones = new ArrayList<>();
         List<Zone> surplusZones = new ArrayList<>();
         List<Zone> neutralZones = new ArrayList<>();
