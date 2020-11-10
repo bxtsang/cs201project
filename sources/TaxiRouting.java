@@ -179,8 +179,9 @@ public class TaxiRouting {
             Taxi T = availableTaxis.get(i);
             Zone currentTaxiZone = T.getZone();
 
-            //If the taxi is not assigned and the current taxi's zone does not belong in a zone that has been processed, calculate distance
-            if (!T.isAssigned() && !currentTaxiZone.checkIfZoneIsProcessed(zones)){
+            //If the taxi is not assigned and the current taxi's zone does not belong in a zone that has been processed
+            //Also check that the Taxi we're checking is NOT within the current zone of deficit, calculate distance
+            if (!T.isAssigned() && !currentTaxiZone.checkIfZoneIsProcessed(zones) && currentTaxiZone.getZoneNumber() != zone.getZoneNumber()){
 
                 double measuredDistance = AddressUtilities.calculateDistance(referenceLon, referenceLat, T.getLon(), T.getLat());
 
