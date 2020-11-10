@@ -1,5 +1,6 @@
 package data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,14 @@ public class Zone {
         this.ZoneNumber = zoneNumber;
         this.referenceLongitude = referenceLongitude;
         this.referenceLatitude = referenceLatitude;
+    }
+
+    public List<Double> getCoordinates() {
+        List<Double> coordinates = new ArrayList<>();
+        coordinates.add(this.latitude);
+        coordinates.add(this.longitude);
+
+        return coordinates;
     }
 
     public void setDemand(int demand) {
