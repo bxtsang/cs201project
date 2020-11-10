@@ -21,11 +21,12 @@ public class TaxiRouting {
         //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
         clusteredAddresses = AddressUtilities.initHashMap(supportingAddresses);
         HashMap<Integer, Address> referencePoints = new HashMap<>();
-
+        
         //Populate the HashMap with all Key-Value pairs
         for (Integer i : clusteredAddresses.keySet()){
             referencePoints.put(i, AddressUtilities.findReferencePoint(i, clusteredAddresses));
         }
+        // System.out.println(referencePoints);
 
         // mock taxi demand for each zone
         HashMap<Integer, Integer> demand = new HashMap<>();
@@ -66,6 +67,15 @@ public class TaxiRouting {
         if (availableTaxis == null) {
             return;
         }
+
+        //Set clusters for all the taxis
+        for (Taxi t : availableTaxis){
+            AddressUtilities.findNearestZone(t, referencePoints);
+            System.out.println("Taxi ID: " + t.getId() + " is in Cluster #" + t.getClusterNum());
+        }
+
+        // System.out.println(testing.getClusterNum());
+        // AddressUtilities.calculateDistance(103.62432,1.28653,103.847401,1.28378453902038);
 
         // get all zones (28 zones)
         List<Zone> zones = new ArrayList<>();
