@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.*;
 
 public class TaxiRouting {
-    private static Map<Zone, Taxi> zoneTaxiHashMap = new HashMap<>();
     private static List<Taxi> availableTaxis = getAvailableTaxis();
     private static Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<Zone>(28);
     private static List<Taxi> assignedTaxis = new ArrayList<>();
+    private static List<Zone> zones = new ArrayList<>();
 
     public static void main(String[] args) {
         HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>(); 
@@ -72,7 +72,7 @@ public class TaxiRouting {
         
         // System.out.println("Data check: Number of taxis: " + availableTaxis.size());
         // get all zones (28 zones)
-        List<Zone> zones = new ArrayList<>();
+
 
         for (Taxi t : availableTaxis){
             AddressUtilities.findNearestZone(t, referencePoints);
@@ -137,17 +137,16 @@ public class TaxiRouting {
     }
 
     public static void process(Zone zone) {
-        //dosomething
         // find closest taxis
         for (int i = 0; i < zone.getDeficitAmount(); i++) {
-            Taxi closestTaxi = getClosestTaxi(); // implement this, make sure taxis are not from any previously processed zones
+            Taxi closestTaxi = zone.getClosestTaxi(); // implement this, make sure taxis are not from any previously processed zones
             closestTaxi.setAssignedZone(zone);
             assignedTaxis.add(closestTaxi);
 
             Zone originalZone = closestTaxi.getZone();
             originalZone.removeTaxi(closestTaxi);
 
-            if (!originalZone.isProcessed()) {
+            if (!originalZone.isDeficit()) {
                 if (originalZone.getDeficitAmount() > 0) {
                     originalZone.setDeficit(true);
                     deficitZonesQueue.add(originalZone);

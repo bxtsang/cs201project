@@ -39,7 +39,7 @@ public class Zone {
         return demand;
     }
 
-    public void setTaxis(Collection<Taxi> taxis) {
+    public void setTaxis(Set<Taxi> taxis) {
         this.taxis = taxis;
     }
 
