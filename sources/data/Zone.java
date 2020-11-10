@@ -7,6 +7,7 @@ import java.util.Set;
 
 public class Zone {
     private Set<Taxi> taxis = new HashSet<>();
+    private Integer ZoneNumber; 
     private int demand;
     private double referenceLatitude;
     private double referenceLongitude;
@@ -24,11 +25,21 @@ public class Zone {
         this.demand = demand;
     }
 
+    public Zone(Integer zoneNumber, double referenceLongitude, double referenceLatitude){
+        this.ZoneNumber = zoneNumber;
+        this.referenceLongitude = referenceLongitude;
+        this.referenceLatitude = referenceLatitude;
+    }
+
     public void setDemand(int demand) {
         this.demand = demand;
     }
 
-    public void setTaxis(Set<Taxi> taxis) {
+    public int getDemand(){
+        return demand;
+    }
+
+    public void setTaxis(Collection<Taxi> taxis) {
         this.taxis = taxis;
     }
 
@@ -68,5 +79,9 @@ public class Zone {
 
     public void removeTaxi(Taxi taxi) {
         taxis.remove(taxi);
+    }
+
+    public Integer getZoneNumber(){
+        return ZoneNumber;
     }
 }
