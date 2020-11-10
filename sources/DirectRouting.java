@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import data.*;
+=======
+import data.Taxi;
+import data.Zone;
+>>>>>>> 50764c10facc7edafe67263e85c5a2d3f80710e9
 import jdk.dynalink.beans.StaticClass;
 
 import java.util.List;
@@ -21,13 +26,23 @@ public class DirectRouting {
         // Get mock zones
         List<Zone> zonesMock = mockTaxiData();
 
+        for (Zone zone : zonesMock) {
+            System.out.println(zone.getDemand());
+        }
+
         List<Zone> deficitZones = new ArrayList<>();
         List<Zone> surplusZones = new ArrayList<>();
         List<Zone> neutralZones = new ArrayList<>();
 
         // Fill three lists above 
         for (Zone zone : zonesMock) {
-            categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
+            if (zone.getDeficitAmount() > 0) {
+                deficitZones.add(zone);
+            } else if (zone.getDeficitAmount() < 0) {
+                surplusZones.add(zone);
+            } else {
+                neutralZones.add(zone);
+            }
         }
 
     }
@@ -44,34 +59,31 @@ public class DirectRouting {
 
     //----------------------Approaches-------------------------------
 
-    // Approach 1:
-    // Go through the list of zones and check if the zones are in surplus or deficit
-    // If two zones are both in surplus and deficit, reallocate, then remove them from the list
-    // Even if they're still in surplus / deficit since the numbers are brought closer to 0
-    // At each pass, check if the zones are surplus / neutral and stop loop when they are all surplus / neutral
-    private static List<Zone> alternateRecursiveInefficient(List<Zone> zonesMock) {
+    // // Approach 1:
+    // // Go through the list of zones and check if the zones are in surplus or deficit
+    // // If two zones are both in surplus and deficit, reallocate, then remove them from the list
+    // // Even if they're still in surplus / deficit since the numbers are brought closer to 0
+    // // At each pass, check if the zones are surplus / neutral and stop loop when they are all surplus / neutral
+    // private static List<Zone> alternateRecursiveInefficient(List<Zone> zonesMock) {
 
-        // O(n)
-        if (allSurplusOrNeutral(zonesMock)) {
-            return zonesMock;
-        }
+    //     // O(n)
+    //     if (allSurplusOrNeutral(zonesMock)) {
+    //         return zonesMock;
+    //     }
 
-        // after this line, guaranteed list contains deficit zones
+    //     // O(n^2)
+    //     for (Zone zone : zonesMock) {
+    //         for (Zone zone2 : zonesMock) {
+    //             if (isSurplus(zone) && isDeficit(zone2)) {
+    //                 reallocateTwoZones(zone, zone2);
+    //                 zonesMock.remove(zone);
+    //                 zonesMock.remove(zone2);
+    //             }
+    //         }
+    //     }
 
-        // O(n^2)
-        for (Zone zone : zonesMock) {
-            for (Zone zone2 : zonesMock) {
-                if (isSurplusAndDeficitPair(zone, zone2))) {
-                    reallocateTwoZones(zone, zone2);
-                    // remove reallocated zones
-                    zonesMock.remove(zone);
-                    zonesMock.remove(zone2);
-                }
-            }
-        }
-
-        alternateRecursiveInefficient(zonesMock);
-    }
+    //     alternateRecursiveInefficient(zonesMock);
+    // }
 
     public static boolean isSurplusAndDeficitPair(Zone zone, Zone zone2) {
         return isSurplus(zone) && isDeficit(zone2);
@@ -97,8 +109,7 @@ public class DirectRouting {
         for (Zone deficitZone : deficitZones) {
             int deficit = deficitZone.getDeficitAmount();
 
-            for (Entry<Integer, Integer> entry : surplusMap.entrySet()) {
-                // if surplus zones have less than taxis required in deficit zones, just replenish with their surpluses
+            for (Map.Entry<Integer, Integer> entry : surplusMap.entrySet()) {
                 if (entry.getValue() < deficit) {
                     int taxisToMove = entry.getValue();
                     // move this number of taxis from zone entry.getKey() to deficitZone
@@ -190,21 +201,21 @@ public class DirectRouting {
         return zones;
     }
 
-    private static HashMap<Integer, Address> getReferencePoints() {
+    // private static HashMap<Integer, Address> getReferencePoints() {
 
-        //Load all supporting dataset into arrayList
-        ArrayList<Address> supportingAddresses = new ArrayList<>();
-        FindClusters.loadAddresses(supportingAddresses);
+    //     //Load all supporting dataset into arrayList
+    //     ArrayList<Address> supportingAddresses = new ArrayList<>();
+    //     FindClusters.loadAddresses(supportingAddresses);
 
-        //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
-        HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
-        clusteredAddresses = FindClusters.initHashMap(supportingAddresses);
-        HashMap<Integer, Address> referencePoints = new HashMap<>();
-        for (Integer key : clusteredAddresses.keySet()){
-            referencePoints.put(key, FindClusters.findReferencePoint(i, clusteredAddresses));
-        }
+    //     //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
+    //     HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
+    //     clusteredAddresses = FindClusters.initHashMap(supportingAddresses);
+    //     HashMap<Integer, Address> referencePoints = new HashMap<>();
+    //     for (Integer i : clusteredAddresses.keySet()){
+    //         referencePoints.put(i, FindClusters.findReferencePoint(i, clusteredAddresses));
+    //     }
 
-        return referencePoints;
-    }
+    //     return referencePoints;
+    // }
 
 }
