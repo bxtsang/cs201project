@@ -139,8 +139,10 @@ public class TaxiRouting {
     public static void process(Zone zone) {
         // find closest taxis
         for (int i = 0; i < zone.getDeficitAmount(); i++) {
-            Taxi closestTaxi = zone.getClosestTaxi(); // implement this, make sure taxis are not from any previously processed zones
+            Taxi closestTaxi = getClosestTaxi(zone, availableTaxis, zones); // implement this, make sure taxis are not from any previously processed zones
             closestTaxi.setAssignedZone(zone);
+            closestTaxi.setAssigned(true);
+
             assignedTaxis.add(closestTaxi);
 
             Zone originalZone = closestTaxi.getZone();
@@ -153,5 +155,41 @@ public class TaxiRouting {
                 }
             }
         }
+
+        //Update the zone that it is now processed
+        zone.setProcessed(true);
     }
+
+    public static Taxi getClosestTaxi(Zone zone, List<Taxi> availableTaxis, List<Zone> zones){
+        double referenceLon = zone.getReferenceLon();
+        double referenceLat = zone.getReferenceLat();
+        
+        //Arbitrarily large distance initialized
+        double minimumDistance = 10000000.0;
+
+        //Pointer to find the taxi to be returned
+        int indexOfMinDistance = 0;
+
+        for (int i = 0; i < availableTaxis.size(); i++){
+            //For each taxi, if the taxi is not assigned && its zone is not processed, then calculate it's distance from the zone's reference point
+            Taxi T = availableTaxis.get(i);
+            Zone currentTaxiZone = T.getZone();
+
+            //If the taxi is not assigned and the current taxi's zone does not belong in a zone that has been processed, calculate distance
+            if (!T.isAssigned() && !currentTaxiZone.checkIfZoneIsProcessed(zones)){
+
+                double measuredDistance = AddressUtilities.calculateDistance(referenceLon, referenceLat, T.getLon(), T.getLat());
+
+                //Finding the smallest distance: Update the index of the taxi with the minimum distance 
+                if (measuredDistance < minimumDistance){
+                    minimumDistance = measuredDistance;
+                    indexOfMinDistance = i;
+                }
+            }
+        }
+
+        return availableTaxis.get(indexOfMinDistance);
+    }
+
+    
 }

@@ -1,12 +1,45 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.Set;
 
 import java.lang.Math;
 import data.Taxi;
 import data.Zone;
 
 public class AddressUtilities {
+
+
+    /**
+     * Given a taxi, find the closest address in the taxi's assigned zone
+     * Method also updates the taxi's travelling distance 
+     */
+    public static Address findNearestAddress(Taxi taxi,  HashMap<Integer, List<Address>> clusteredAddresses){
+
+        Zone assignedZone = taxi.getAssignedZone();
+        List<Address> addresses = clusteredAddresses.get(assignedZone.getZoneNumber());
+        double currentLon = taxi.getLon();
+        double currentLat = taxi.getLat();
+        double toTravel = 10000000.0;
+        
+        int addressPointer = 0;
+
+        //For every address within a zone, find the nearest address to the taxi's current position
+        for (int i = 0; i < addresses.size(); i++){
+            Address add = addresses.get(i);
+            double distance = calculateDistance(currentLon, currentLat, add.getLon(), add.getLat());
+            if (distance < toTravel){
+                toTravel = distance;
+                addressPointer = i;
+            }
+        }
+
+        taxi.setDistanceTravelled(toTravel);
+        return addresses.get(addressPointer);
+
+    }
+
+
 
     /**
      * This method takes in these four parameters, and then updates the list of zones with the zone's reference points, demand and their corresponding list of taxis
@@ -28,11 +61,14 @@ public class AddressUtilities {
                 if (T.getClusterNum() == i){
                     taxiList.add(T);
                 }
+                //Set the zone for every taxi
+                T.setZone(new Zone(i, reference.getLon(), reference.getLat()));
             }
             Integer demandForZone = demand.get(i);
 
             Zone newZone = new Zone(i, reference.getLon(), reference.getLat());
-            newZone.setTaxis(taxiList);
+            Set<Taxi> taxiSet = new HashSet<>(taxiList);
+            newZone.setTaxis(taxiSet);
             newZone.setDemand(demandForZone);
             //Put the demand hashmap as a param for this method and then setDemand here
             zones.add(newZone);
