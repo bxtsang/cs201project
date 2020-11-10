@@ -1,26 +1,14 @@
-import data.Taxi;
-import data.Zone;
-import jdk.dynalink.beans.StaticClass;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+
+import data.Taxi;
+import data.Zone;
 
 public class DirectRouting {
-
-    /*
-        Naive Approach:
-        Given a collection of clusters, find a cluster with a surplus, and another with a deficit.
-        Pick a Taxi in surplus to be moved to deficit
-        Rebalance accordingly
-        Output: Taxi moved, distance travelled
-    */
-
     public static void main(String[] args) {
-
-        // Get mock zones
-        // will be changed later to fetch real data
         List<Zone> zonesMock = mockTaxiData();
 
         List<Zone> deficitZones = new ArrayList<>();
@@ -29,24 +17,17 @@ public class DirectRouting {
 
         // Fill three lists above 
         for (Zone zone : zonesMock) {
-            if (zone.getDeficitAmount() > 0) {
-                deficitZones.add(zone);
-            } else if (zone.getDeficitAmount() < 0) {
-                surplusZones.add(zone);
-            } else {
-                neutralZones.add(zone);
-            }
+            categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
         }
 
+        directRouting(deficitZones, surplusZones, neutralZones);
     }
 
-    //----------------------Approach-------------------------------
-
-    // Approach:
+    // Approach 2:
     // For each zone in surplus, store the quantity of surplus with the zone id in a hashmap
     // For each zone in deficit, zone can 'shop' for surplus
     // Amount taken is subtracted accordingly from the surplus zones
-    private Map<Integer, Integer> mapSurplus(List<Zone> surplusZones) {
+    private static Map<Integer, Integer> mapSurplus(List<Zone> surplusZones) {
         Map<Integer, Integer> surplusMap = new HashMap<>();
         int idCount = 0;
         for (Zone zone : surplusZones) {
@@ -56,62 +37,59 @@ public class DirectRouting {
         return surplusMap;
     }
 
-    private void alternateUsesMap(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+    private static void directRouting(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
         Map<Integer, Integer> surplusMap = mapSurplus(surplusZones);
 
         for (Zone deficitZone : deficitZones) {
             int deficit = deficitZone.getDeficitAmount();
 
             for (Map.Entry<Integer, Integer> entry : surplusMap.entrySet()) {
+                int taxisToMove = 0;
                 if (entry.getValue() < deficit) {
-                    int taxisToMove = entry.getValue();
-                    // move this number of taxis from zone entry.getKey() to deficitZone
-                    // remove entry.getKey() from hashmap
-                    // neutralZones.add(surplusZones.get(entry.getKey()))
-                    // surplusZones.remove(surplusZones.get(entry.getKey()))
-                    // might run into concurrent modification exception
+                    // eg. surplus has 3 extra taxis, deficit needs 5 more
+                    // put all surplus into deficit, then move surplus to neutral
+                    taxisToMove = entry.getValue();
+
                 } else if (entry.getValue() > deficit) {
-                    int taxisToMove = entry.getValue() - deficit;
-                    // move this number of taxis from zone entry.getKey() to deficitZone
-                    // neutralZones.add(deficitZone)
-                    // deficitZones.remove(deficitZone)
+                    taxisToMove = entry.getValue() - deficit;
                 } else {
-                    int taxisToMove = deficit;
-                    // move this number of taxis from zone entry.getKey() to deficitZone
-                    // neutralZones.add(surplusZones.get(entry.getKey()))
-                    // neutralZones.add(deficitZone)
-                    // deficitZones.remove(deficitZone)
-                    // surplusZones.remove(surplusZones.get(entry.getKey()))
+                    taxisToMove = deficit;
                 }
+
+                // Debugging purposes
+                System.out.println("BEFORE:");
+                System.out.println(surplusZones.get(entry.getKey()).getDeficitAmount());
+                System.out.println("AFTER:");
+                moveTaxis(taxisToMove, deficitZone, surplusZones.get(entry.getKey()));
+                System.out.println(surplusZones.get(entry.getKey()).getDeficitAmount());
             }
         }
     }
 
+    private static void moveTaxis(int taxisNum, Zone deficitZone, Zone surplusZone) {
+        Set<Taxi> deficitZoneTaxis = deficitZone.getTaxis();
+        Set<Taxi> surplusZoneTaxis = surplusZone.getTaxis();
 
-    //----------------Helper functions------------------------
-    private static void reallocateTwoZones(Zone deficit, Zone surplus) {
-        // take down amount to be reallocated
-        // go through taxi list and move that number of taxis
-        // remove from one, add to the other
-    }
-
-
-    private static void reallocate(Zone zone, List<Zone> surplusZones) {
-        int currentDeficit = zone.getDeficitAmount();
-
-        for (Zone surplusZone : surplusZones) {
-            if (Math.abs(surplusZone.getDeficitAmount()) > currentDeficit) {
-                int taxisToMove = Math.abs(surplusZone.getDeficitAmount()) - currentDeficit;
-                // move taxi
-                // subtract currentDeficit from surplusZone's surplus
-            }
+        for (int i = 0; i < taxisNum; i++) {
+            Taxi taxi = deficitZoneTaxis.get(taxisNum - i - 1);
+            deficitZone.removeTaxi(taxi);
+            surplusZone.addTaxi(taxi);
         }
     }
 
 
 
-    //-----------------Mock data------------------------------
+    public static void categoriseEachZone(Zone zone, List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+        if (zone.getDeficitAmount() > 0) {
+            deficitZones.add(zone);
+        } else if (zone.getDeficitAmount() < 0) {
+            surplusZones.add(zone);
+        } else {
+            neutralZones.add(zone);
+        }
+    }
 
+    // MOCK DATA
     private static List<Zone> mockTaxiData() {
         List<Zone> zones = mockZoneData();
         // create surplus in zone1 (demand: 1, taxis: 2)
@@ -153,22 +131,4 @@ public class DirectRouting {
 
         return zones;
     }
-
-    // private static HashMap<Integer, Address> getReferencePoints() {
-
-    //     //Load all supporting dataset into arrayList
-    //     ArrayList<Address> supportingAddresses = new ArrayList<>();
-    //     FindClusters.loadAddresses(supportingAddresses);
-
-    //     //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
-    //     HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
-    //     clusteredAddresses = FindClusters.initHashMap(supportingAddresses);
-    //     HashMap<Integer, Address> referencePoints = new HashMap<>();
-    //     for (Integer i : clusteredAddresses.keySet()){
-    //         referencePoints.put(i, FindClusters.findReferencePoint(i, clusteredAddresses));
-    //     }
-
-    //     return referencePoints;
-    // }
-
 }

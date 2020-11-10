@@ -34,8 +34,8 @@ public class Zone {
 
     public List<Double> getCoordinates() {
         List<Double> coordinates = new ArrayList<>();
-        coordinates.add(this.latitude);
-        coordinates.add(this.longitude);
+        coordinates.add(this.referenceLatitude);
+        coordinates.add(this.referenceLongitude);
 
         return coordinates;
     }
@@ -93,4 +93,22 @@ public class Zone {
     public Integer getZoneNumber(){
         return ZoneNumber;
     }
+
+    public double getReferenceLon(){
+        return referenceLongitude;
+    }
+
+    public double getReferenceLat(){
+        return referenceLatitude;
+    }
+
+    public boolean checkIfZoneIsProcessed(List<Zone> zones){
+        for (Zone z: zones){
+            if (z.getZoneNumber() == this.ZoneNumber){
+                return z.isProcessed();
+            }
+        }
+        return false;
+    }
+
 }

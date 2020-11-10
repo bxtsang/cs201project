@@ -8,6 +8,7 @@ public class Taxi {
     private double longitude;
     private int id;
     private Integer clusterNum;
+    private double distanceTravelled;
 
     private Zone zone;
     private Zone assignedZone;
@@ -23,7 +24,7 @@ public class Taxi {
         this.zone = zone;
     }
 
-    public void setIsAssigned(boolean isAssigned) {
+    public void setAssigned(boolean isAssigned) {
         this.isAssigned = isAssigned;
     }
 
@@ -72,5 +73,17 @@ public class Taxi {
 
     public void setAssignedZone(Zone assignedZone) {
         this.assignedZone = assignedZone;
+    }
+
+    public Zone getAssignedZone(){
+        return assignedZone;
+    }
+
+    public void setDistanceTravelled(double distance){
+        this.distanceTravelled = distance;
+    }
+
+    public double getDistanceTravelled(){
+        return distanceTravelled;
     }
 }
