@@ -1,4 +1,4 @@
-import data.Taxi;
+import data.*;
 import jdk.dynalink.beans.StaticClass;
 
 import java.util.List;
@@ -27,15 +27,19 @@ public class DirectRouting {
 
         // Fill three lists above 
         for (Zone zone : zonesMock) {
-            if (zone.getDeficit() > 0) {
-                deficitZones.add(zone);
-            } else if (zone.getDeficit() < 0) {
-                surplusZones.add(zone);
-            } else {
-                neutralZones.add(zone);
-            }
+            categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
         }
 
+    }
+
+    public static void categoriseEachZone(Zone zone, List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+        if (zone.getDeficitAmount() > 0) {
+            deficitZones.add(zone);
+        } else if (zone.getDeficitAmount() < 0) {
+            surplusZones.add(zone);
+        } else {
+            neutralZones.add(zone);
+        }
     }
 
     //----------------------Approaches-------------------------------
@@ -57,7 +61,7 @@ public class DirectRouting {
         // O(n^2)
         for (Zone zone : zonesMock) {
             for (Zone zone2 : zonesMock) {
-                if (isSurplus(zone) && isDeficit(zone2)) {
+                if (isSurplusAndDeficitPair(zone, zone2))) {
                     reallocateTwoZones(zone, zone2);
                     // remove reallocated zones
                     zonesMock.remove(zone);
@@ -69,6 +73,10 @@ public class DirectRouting {
         alternateRecursiveInefficient(zonesMock);
     }
 
+    public static boolean isSurplusAndDeficitPair(Zone zone, Zone zone2) {
+        return isSurplus(zone) && isDeficit(zone2);
+    }
+
     // Approach 2:
     // For each zone in surplus, store the quantity of surplus with the zone id in a hashmap
     // For each zone in deficit, zone can 'shop' for surplus
@@ -77,7 +85,7 @@ public class DirectRouting {
         Map<Integer, Integer> surplusMap = new HashMap<>();
         int idCount = 0;
         for (Zone zone : surplusZones) {
-            surplusMap.put(idCount++, Math.abs(zone.getDeficit()));
+            surplusMap.put(idCount++, Math.abs(zone.getDeficitAmount()));
         }
 
         return surplusMap;
@@ -87,7 +95,7 @@ public class DirectRouting {
         Map<Integer, Integer> surplusMap = mapSurplus(surplusZones);
 
         for (Zone deficitZone : deficitZones) {
-            int deficit = deficitZone.getDeficit();
+            int deficit = deficitZone.getDeficitAmount();
 
             for (Entry<Integer, Integer> entry : surplusMap.entrySet()) {
                 // if surplus zones have less than taxis required in deficit zones, just replenish with their surpluses
@@ -124,12 +132,12 @@ public class DirectRouting {
     }
 
 
-    private static reallocate(Zone zone, List<Zone> surplusZones) {
-        int currentDeficit = zone.getDeficit();
+    private static void reallocate(Zone zone, List<Zone> surplusZones) {
+        int currentDeficit = zone.getDeficitAmount();
 
         for (Zone surplusZone : surplusZones) {
-            if (Math.abs(surplusZone.getDeficit()) > currentDeficit) {
-                int taxisToMove = Math.abs(surplusZone.getDeficit()) - currentDeficit;
+            if (Math.abs(surplusZone.getDeficitAmount()) > currentDeficit) {
+                int taxisToMove = Math.abs(surplusZone.getDeficitAmount()) - currentDeficit;
                 // move taxi
                 // subtract currentDeficit from surplusZone's surplus
             }
@@ -192,8 +200,8 @@ public class DirectRouting {
         HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
         clusteredAddresses = FindClusters.initHashMap(supportingAddresses);
         HashMap<Integer, Address> referencePoints = new HashMap<>();
-        for (Integer i : clusteredAddresses.keySet()){
-            referencePoints.put(i, FindClusters.findReferencePoint(i, clusteredAddresses));
+        for (Integer key : clusteredAddresses.keySet()){
+            referencePoints.put(key, FindClusters.findReferencePoint(i, clusteredAddresses));
         }
 
         return referencePoints;
