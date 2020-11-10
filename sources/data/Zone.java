@@ -1,15 +1,18 @@
 package data;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Zone {
+    private Set<Taxi> taxis = new HashSet<>();
     private Integer ZoneNumber; 
-    private Collection<Taxi> taxis;
     private int demand;
     private double referenceLatitude;
     private double referenceLongitude;
     private boolean isProcessed;
+    private boolean isDeficit;
 
     public Zone(List<Double> coordinates) {
         this.referenceLatitude = coordinates.get(0);
@@ -40,11 +43,11 @@ public class Zone {
         this.taxis = taxis;
     }
 
-    public Collection<Taxi> getTaxis() {
+    public Set<Taxi> getTaxis() {
         return this.taxis;
     }
 
-    public boolean getIsProcessed() {
+    public boolean isProcessed() {
         return this.isProcessed;
     }
 
@@ -52,10 +55,30 @@ public class Zone {
         this.taxis.add(taxi);
     }
 
-    public int getDeficit() {
+    public void setProcessed(boolean processed) {
+        isProcessed = processed;
+    }
+
+    public boolean contains(Taxi taxi) {
+        return taxis.contains(taxi);
+    }
+
+    public int getDeficitAmount() {
         // positive : deficit
         // negative : surplus
         return demand - taxis.size();
+    }
+
+    public void setDeficit(boolean deficit) {
+        isDeficit = deficit;
+    }
+
+    public boolean isDeficit() {
+        return isDeficit;
+    }
+
+    public void removeTaxi(Taxi taxi) {
+        taxis.remove(taxi);
     }
 
     public Integer getZoneNumber(){
