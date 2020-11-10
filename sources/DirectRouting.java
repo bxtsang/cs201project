@@ -52,11 +52,14 @@ public class DirectRouting {
             return zonesMock;
         }
 
+        // after this line, guaranteed list contains deficit zones
+
         // O(n^2)
         for (Zone zone : zonesMock) {
             for (Zone zone2 : zonesMock) {
                 if (isSurplus(zone) && isDeficit(zone2)) {
                     reallocateTwoZones(zone, zone2);
+                    // remove reallocated zones
                     zonesMock.remove(zone);
                     zonesMock.remove(zone2);
                 }
@@ -74,19 +77,20 @@ public class DirectRouting {
         Map<Integer, Integer> surplusMap = new HashMap<>();
         int idCount = 0;
         for (Zone zone : surplusZones) {
-            surplusMap.put(idCount++, zone.getDeficit());
+            surplusMap.put(idCount++, Math.abs(zone.getDeficit()));
         }
 
         return surplusMap;
     }
 
     private void alternateUsesMap(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
-        Map<Integer, Integer> surplusMap = mapSurplus();
+        Map<Integer, Integer> surplusMap = mapSurplus(surplusZones);
 
         for (Zone deficitZone : deficitZones) {
             int deficit = deficitZone.getDeficit();
 
             for (Entry<Integer, Integer> entry : surplusMap.entrySet()) {
+                // if surplus zones have less than taxis required in deficit zones, just replenish with their surpluses
                 if (entry.getValue() < deficit) {
                     int taxisToMove = entry.getValue();
                     // move this number of taxis from zone entry.getKey() to deficitZone
