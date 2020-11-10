@@ -10,6 +10,7 @@ public class Taxi {
     private Integer clusterNum;
 
     private Zone zone;
+    private Zone assignedZone;
     private boolean isAssigned;
 
     public Taxi(List<Double> coordinates, int id) {
@@ -67,5 +68,9 @@ public class Taxi {
 
     public Integer getClusterNum(){
         return clusterNum;
+    }
+
+    public void setAssignedZone(Zone assignedZone) {
+        this.assignedZone = assignedZone;
     }
 }
