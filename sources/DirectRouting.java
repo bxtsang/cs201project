@@ -29,9 +29,9 @@ public class DirectRouting {
 
 //        List<Zone> zonesMock = mockTaxiData();
 
-        List<Zone> deficitZones = new ArrayList<>();
-        List<Zone> surplusZones = new ArrayList<>();
-        List<Zone> neutralZones = new ArrayList<>();
+        Set<Zone> deficitZones = new HashSet<>();
+        Set<Zone> surplusZones = new HashSet<>();
+        Set<Zone> neutralZones = new HashSet<>();
 
         // Fill three lists above 
         for (Zone zone : zones) {
@@ -43,11 +43,22 @@ public class DirectRouting {
         System.out.println(neutralZones.size());
 
         // Perform direct routing
-        directRoutingWithoutZones(deficitZones, surplusZones, neutralZones);
+        directRouting(deficitZones, surplusZones, neutralZones);
         MeasureOutput.measureOutput(assignedTaxis);
     }
 
-    private static void directRoutingWithoutZones(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+    private static void directRoutingWithoutZones(Set<Zone> deficitZones, Set<Zone> surplusZones, Set<Zone> neutralZones) {
+        // complexity: sum of all deficits * numTaxis
+        // complex and not optimized
+        Set<Zone> deficitZones = new HashSet<>();
+        Set<Zone> surplusZones = new HashSet<>();
+        Set<Zone> neutralZones = new HashSet<>();
+
+        // Fill three lists above
+        for (Zone zone : zones) {
+            categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
+        }
+
         for (Zone deficitZone : deficitZones) {
             System.out.println("Current Deficit Zone: " + deficitZone.getZoneNumber());
             int deficit = deficitZone.getDeficitAmount();
@@ -66,7 +77,20 @@ public class DirectRouting {
         }
     }
 
-    private static void directRouting(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+    private static void directRouting(Set<Zone> deficitZones, Set<Zone> surplusZones, Set<Zone> neutralZones) {
+        // numDeficitZones * surplusZones * deficit
+        // sum of all zones' deficit
+        // less complex, not optimised
+        Set<Zone> deficitZones = new HashSet<>();
+        Set<Zone> surplusZones = new HashSet<>();
+        Set<Zone> neutralZones = new HashSet<>();
+
+        // Fill three lists above
+        for (Zone zone : zones) {
+            categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
+        }
+
+
         for (Zone deficitZone : deficitZones) {
             System.out.println("Current Deficit Zone: " + deficitZone.getZoneNumber());
             int deficit = deficitZone.getDeficitAmount();
@@ -84,10 +108,13 @@ public class DirectRouting {
 
                 if (surplus > deficit) {
                     moveTaxis(deficit, deficitZone, surplusZone);
+                    deficit = deficitZone.getDeficitAmount();
                     neutralZones.add(deficitZone);
+                    break;
 //                    deficitZones.remove(deficitZone);
                 } else if (surplus <= deficit) {
                     moveTaxis(surplus, deficitZone, surplusZone);
+                    deficit = deficitZone.getDeficitAmount();
                     neutralZones.add(surplusZone);
 //                    surplusZones.remove(surplusZone);
                 }
@@ -132,7 +159,7 @@ public class DirectRouting {
     }
 
 
-    public static void categoriseEachZone(Zone zone, List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+    public static void categoriseEachZone(Zone zone, Set<Zone> deficitZones, Set<Zone> surplusZones, Set<Zone> neutralZones) {
         if (zone.getDeficitAmount() > 0) {
             deficitZones.add(zone);
         } else if (zone.getDeficitAmount() < 0) {

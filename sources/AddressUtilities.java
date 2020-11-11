@@ -67,7 +67,6 @@ public class AddressUtilities {
                 T.setZone(zones.get(i-1));
             }
             Integer demandForZone = demand.get(i);
-            System.out.println(zones.get(i-1).toString());
             Set<Taxi> taxiSet = new HashSet<>(taxiList);
             zones.get(i-1).setTaxis(taxiSet);
             zones.get(i-1).setDemand(demandForZone);
