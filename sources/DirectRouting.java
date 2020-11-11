@@ -1,8 +1,4 @@
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 import data.Taxi;
 import data.Zone;
@@ -69,11 +65,12 @@ public class DirectRouting {
     private static void moveTaxis(int taxisNum, Zone deficitZone, Zone surplusZone) {
         Set<Taxi> deficitZoneTaxis = deficitZone.getTaxis();
         Set<Taxi> surplusZoneTaxis = surplusZone.getTaxis();
+        Iterator<Taxi> surplusIterator = surplusZoneTaxis.iterator();
 
         for (int i = 0; i < taxisNum; i++) {
-            Taxi taxi = deficitZoneTaxis.get(taxisNum - i - 1);
-            deficitZone.removeTaxi(taxi);
-            surplusZone.addTaxi(taxi);
+            Taxi taxi = surplusIterator.next();
+            surplusZone.removeTaxi(taxi);
+            deficitZone.addTaxi(taxi);
         }
     }
 
