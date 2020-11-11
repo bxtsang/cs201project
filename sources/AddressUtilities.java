@@ -46,12 +46,11 @@ public class AddressUtilities {
      * @param zones A list of zones to populate
      * @param referencePoints A HashMap of reference points to update each zone based on its cluster number
      * @param availableTaxis A list of all available taxis
-     * @param demand A HashMap of key-value pairs of cluster number and their corresponding demands
      */
-    public static void updateZones(List<Zone> zones, HashMap<Integer, Address> referencePoints, List<Taxi> availableTaxis, 
-        HashMap<Integer, Integer> demand){
+    public static void updateZones(List<Zone> zones, HashMap<Integer, Address> referencePoints, List<Taxi> availableTaxis){
         //For each key in reference points, get all taxis in available taxis belonging to that cluster
         //Create a list, and along with the reference point, create a Zone
+        Map<Integer, Integer> demand = Demand.getDemand();
 
         List<Taxi> taxiList = new ArrayList<>();
 
