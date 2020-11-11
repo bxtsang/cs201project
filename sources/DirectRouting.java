@@ -16,7 +16,9 @@ public class DirectRouting {
             categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
         }
 
-        directRouting(deficitZones, surplusZones, neutralZones);
+        List<Zone> surplusZonesDuplicate = new ArrayList<>(surplusZones);
+
+        directRouting(deficitZones, surplusZones, surplusZonesDuplicate, neutralZones);
     }
 
     // Approach 2:
@@ -33,7 +35,7 @@ public class DirectRouting {
         return surplusMap;
     }
 
-    private static void directRouting(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> neutralZones) {
+    private static void directRouting(List<Zone> deficitZones, List<Zone> surplusZones, List<Zone> surplusZonesDuplicate, List<Zone> neutralZones) {
         Map<Integer, Integer> surplusMap = mapSurplus(surplusZones);
 
         for (Zone deficitZone : deficitZones) {
@@ -41,23 +43,19 @@ public class DirectRouting {
 
             for (Map.Entry<Integer, Integer> entry : surplusMap.entrySet()) {
                 int taxisToMove = 0;
-                if (entry.getValue() < deficit) {
+                int surplus = entry.getValue();
+                if (surplus <= deficit) {
                     // eg. surplus has 3 extra taxis, deficit needs 5 more
                     // put all surplus into deficit, then move surplus to neutral
-                    taxisToMove = entry.getValue();
-
-                } else if (entry.getValue() > deficit) {
-                    taxisToMove = entry.getValue() - deficit;
+                    taxisToMove = surplus;
                 } else {
-                    taxisToMove = deficit;
-                }
-
-                // Debugging purposes
-                System.out.println("BEFORE:");
-                System.out.println(surplusZones.get(entry.getKey()).getDeficitAmount());
-                System.out.println("AFTER:");
+                    // surplus > deficit, there will be leftover surplus
+                    // leave zone in surplusZones
+                    // move deficitZone to neutral
+                    taxisToMove = surplus - deficit;
+                } 
+                surplusMap.put(entry.getKey(), surplus - taxisToMove);
                 moveTaxis(taxisToMove, deficitZone, surplusZones.get(entry.getKey()));
-                System.out.println(surplusZones.get(entry.getKey()).getDeficitAmount());
             }
         }
     }
@@ -65,11 +63,23 @@ public class DirectRouting {
     private static void moveTaxis(int taxisNum, Zone deficitZone, Zone surplusZone) {
         Set<Taxi> deficitZoneTaxis = deficitZone.getTaxis();
         Set<Taxi> surplusZoneTaxis = surplusZone.getTaxis();
-        Iterator<Taxi> surplusIterator = surplusZoneTaxis.iterator();
 
         for (int i = 0; i < taxisNum; i++) {
-            Taxi taxi = surplusIterator.next();
-            surplusZone.removeTaxi(taxi);
+            // Taxi taxi = deficitZoneTaxis.get(taxisNum - i - 1);
+            Iterator<Taxi> surplusZoneIterator = surplusZoneTaxis.iterator();
+            if (!surplusZoneIterator.hasNext()) {
+                return;
+            }
+            Taxi taxi = surplusZoneIterator.next();
+
+            // // Debug
+            // System.out.print("round");
+            // System.out.print(i);
+            // System.out.print(": Taxi ");
+            // System.out.println(taxi.getId());
+
+
+            surplusZone.removeTaxi(taxi); // modify later to remove only when the surplus is gone
             deficitZone.addTaxi(taxi);
         }
     }
@@ -106,6 +116,39 @@ public class DirectRouting {
         zones.get(1).addTaxi(taxi3);
         zones.get(1).addTaxi(taxi4);
 
+        // create deficit in zone3 (demand: 100, taxis: 4)
+        Taxi taxi5 = new Taxi(coordinates, 5);
+        Taxi taxi6 = new Taxi(coordinates, 6);
+        Taxi taxi7 = new Taxi(coordinates, 7);
+        Taxi taxi8 = new Taxi(coordinates, 8);
+
+        zones.get(2).addTaxi(taxi5);
+        zones.get(2).addTaxi(taxi6);
+        zones.get(2).addTaxi(taxi7);
+        zones.get(2).addTaxi(taxi8);
+        
+        // create surplus in zone 4 (demand: 2, taxis: 4)
+        Taxi taxi9 = new Taxi(coordinates, 9);
+        Taxi taxi10 = new Taxi(coordinates, 10);
+        Taxi taxi11 = new Taxi(coordinates, 11);
+        Taxi taxi12 = new Taxi(coordinates, 12);
+
+        zones.get(3).addTaxi(taxi9);
+        zones.get(3).addTaxi(taxi10);
+        zones.get(3).addTaxi(taxi11);
+        zones.get(3).addTaxi(taxi12);
+
+        // create surplus in zone 5 (demand: 1, taxis: 4)
+        Taxi taxi13 = new Taxi(coordinates, 13);
+        Taxi taxi14 = new Taxi(coordinates, 14);
+        Taxi taxi15 = new Taxi(coordinates, 15);
+        Taxi taxi16 = new Taxi(coordinates, 16);
+
+        zones.get(4).addTaxi(taxi13);
+        zones.get(4).addTaxi(taxi14);
+        zones.get(4).addTaxi(taxi15);
+        zones.get(4).addTaxi(taxi16);
+
         return zones;
     }
 
@@ -114,11 +157,11 @@ public class DirectRouting {
         coordinates.add(103.5);
         coordinates.add(170.5);
         List<Zone> zones = new ArrayList<>();
-        Zone zone1 = new Zone(coordinates, 1);
-        Zone zone2 = new Zone(coordinates, 10);
-        Zone zone3 = new Zone(coordinates, 100);
-        Zone zone4 = new Zone(coordinates, 5);
-        Zone zone5 = new Zone(coordinates, 15);
+        Zone zone1 = new Zone(coordinates, 1, 0);
+        Zone zone2 = new Zone(coordinates, 10, 1);
+        Zone zone3 = new Zone(coordinates, 100, 2);
+        Zone zone4 = new Zone(coordinates, 2, 3);
+        Zone zone5 = new Zone(coordinates, 1, 4);
 
         zones.add(zone1);
         zones.add(zone2);
