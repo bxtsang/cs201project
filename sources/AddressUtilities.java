@@ -9,7 +9,7 @@ import data.Zone;
 
 public class AddressUtilities {
     private static ArrayList<Address> supportingAddresses = new ArrayList<>();
-    private static Map<Integer, List<Address>> clusteredAddresses;
+    private static Map<Integer, List<Address>> clusteredAddresses = new HashMap<>();
 
 
     /**
@@ -141,6 +141,7 @@ public class AddressUtilities {
      */
     public static Map<Integer, List<Address>> initHashMap(){
         //Since the address dataset is already pre-sorted in the ascending order based on clusters, currentCluster will be #1
+        System.out.println(supportingAddresses.get(0).toString());
         Integer currentCluster = supportingAddresses.get(0).getClusterNumber();
         List<Address> tempList = new ArrayList<>();
 
@@ -191,6 +192,7 @@ public class AddressUtilities {
                 double lon = sc.nextDouble();
                 double lat = sc.nextDouble();
                 int clusterNum = sc.nextInt();
+                sc.nextLine();
                 Address oneAddress = new Address(lon, lat, clusterNum);
                 supportingAddresses.add(oneAddress);
             }
