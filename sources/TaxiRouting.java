@@ -17,89 +17,32 @@ public class TaxiRouting {
     private static List<Zone> uZones = new ArrayList<>();
 
     public static void main(String[] args) {
-//        preProcessing();
-//        System.out.println("-------------------------------------");
-//        System.out.println("Routing Algorithm 1 - direct with no zones");
-//        System.out.println("-------------------------------------");
-//        routing1();
-//        MeasureOutput.measureOutput(assignedTaxis);
-//        int count = 0;
-//        for (Zone zone : zones) {
-//            if (zone.getDeficitAmount() > 0) {
-//                count ++;
-//            }
-//        }
-//        System.out.println("deficit zones: " + count);
-//
-//        assignedTaxis = new ArrayList<>();
-//        zones = new ArrayList<>();
-//        preProcessing();
-//        System.out.println();
-//        System.out.println();
-//        System.out.println();
-//        System.out.println("-------------------------------------");
-//        System.out.println("Routing Algorithm 2 - direct from surplus zones");
-//        System.out.println("-------------------------------------");
-//        routing2();
-//        MeasureOutput.measureOutput(assignedTaxis);
-//        count = 0;
-//        for (Zone zone : zones) {
-//            if (zone.getDeficitAmount() > 0) {
-//                count ++;
-//            }
-//        }
-//        System.out.println("deficit zones: " + count);
-//
-//        assignedTaxis = new ArrayList<>();
-//        zones = new ArrayList<>();
         preProcessing();
         System.out.println();
         System.out.println();
         System.out.println();
         System.out.println("-------------------------------------");
-        System.out.println("Routing Algorithm 3 - optimized with greedy");
+        System.out.println("Routing Algorithm 1 - direct from surplus zones");
         System.out.println("-------------------------------------");
-        routing3();
+        routing1();
         MeasureOutput.measureOutput(assignedTaxis);
-        int count = 0;
-        for (Zone zone : zones) {
-            if (zone.getDeficitAmount() > 0) {
-                count ++;
-            }
-        }
-        System.out.println("deficit zones: " + count);
+
+        assignedTaxis = new ArrayList<>();
+        zones = new ArrayList<>();
+        preProcessing();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("-------------------------------------");
+        System.out.println("Routing Algorithm 2 - optimized with greedy");
+        System.out.println("-------------------------------------");
+        routing2();
+        MeasureOutput.measureOutput(assignedTaxis);
 
 
     }
 
     public static void routing1() {
-        Set<Zone> deficitZones = new HashSet<>();
-        Set<Zone> surplusZones = new HashSet<>();
-        Set<Zone> neutralZones = new HashSet<>();
-
-        // Fill three lists above
-        for (Zone zone : zones) {
-            categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
-        }
-
-        for (Zone deficitZone : deficitZones) {
-            int deficit = deficitZone.getDeficitAmount();
-
-            for (int i = 0; i < deficit; i++) {
-                for (Taxi taxi : availableTaxis) {
-                    if (surplusZones.contains(taxi.getZone()) && taxi.getAssignedZone() == null) {
-                        taxi.setAssignedZone(deficitZone);
-                        assignedTaxis.add(taxi);
-                        taxi.getZone().removeTaxi(taxi);
-                        deficitZone.addTaxi(taxi);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    public static void routing2() {
         // numDeficitZones * surplusZones * deficit
         // sum of all zones' deficit
         // less complex, not optimised
@@ -151,7 +94,7 @@ public class TaxiRouting {
         // }
     }
 
-    public static void routing3() {
+    public static void routing2() {
         Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<>(28);
 
         for (Zone zone : zones) {
