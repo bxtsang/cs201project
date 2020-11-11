@@ -69,10 +69,10 @@ public class TaxiRouting {
                 deficitZonesQueue.add(zone);
             }
         }
+        System.out.println("Number of deficit zones = " + deficitZonesQueue.size());
 
         // ----------------------- processing ------------------------
         // while queue is not empty, dequeue and process zone
-        int count = 0;
         while (deficitZonesQueue.size() > 0) {
             Zone current = deficitZonesQueue.poll();
             try {
@@ -80,8 +80,6 @@ public class TaxiRouting {
             } catch (NoClosestTaxiException e) {
                 uZones.add(current);
             }
-            count ++;
-            System.out.println(count);
         }
 
         // meeasure the output of the algorithm

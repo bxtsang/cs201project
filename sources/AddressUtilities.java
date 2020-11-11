@@ -52,27 +52,26 @@ public class AddressUtilities {
     public static void updateZones(List<Zone> zones, HashMap<Integer, Address> referencePoints, List<Taxi> availableTaxis){
         //For each key in reference points, get all taxis in available taxis belonging to that cluster
         //Create a list, and along with the reference point, create a Zone
-        Map<Integer, Integer> demand = Demand.getDemand();
+        Map<Integer, Integer> demand = Demand.getDemand(availableTaxis.size());
 
         List<Taxi> taxiList = new ArrayList<>();
 
         for (Integer i : referencePoints.keySet()){
             Address reference = referencePoints.get(i);
+            zones.add(new Zone(i, reference.getLon(), reference.getLat()));
             for (Taxi T : availableTaxis){
                 if (T.getClusterNum() == i){
                     taxiList.add(T);
                 }
                 //Set the zone for every taxi
-                T.setZone(new Zone(i, reference.getLon(), reference.getLat()));
+                T.setZone(zones.get(i-1));
             }
             Integer demandForZone = demand.get(i);
-
-            Zone newZone = new Zone(i, reference.getLon(), reference.getLat());
+            System.out.println(zones.get(i-1).toString());
             Set<Taxi> taxiSet = new HashSet<>(taxiList);
-            newZone.setTaxis(taxiSet);
-            newZone.setDemand(demandForZone);
+            zones.get(i-1).setTaxis(taxiSet);
+            zones.get(i-1).setDemand(demandForZone);
             //Put the demand hashmap as a param for this method and then setDemand here
-            zones.add(newZone);
             
             taxiList = new ArrayList<>();
         }
