@@ -2,8 +2,13 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.Gson;
+import data.Feature;
 import data.Response;
+import data.Taxi;
 
 public class TaxiData {
     private static final String endpoint = "https://api.data.gov.sg/v1/transport/taxi-availability";
@@ -28,5 +33,24 @@ public class TaxiData {
 
         Response response = gson.fromJson(String.valueOf(content), Response.class);
         return response;
+    }
+
+    public static List<Taxi> getAvailableTaxis() {
+        List<Taxi> availableTaxis = new ArrayList<>();
+
+        try {
+            Response response = getData();
+            List<Feature> features = response.getFeatures();
+            Feature feature = features.get(0);
+            List<List<Double>> coordinates = feature.getGeometry().getCoordinates();
+
+            for (int i = 0; i < coordinates.size(); i++) {
+                availableTaxis.add(new Taxi(coordinates.get(i), i));
+            }
+        } catch (Exception e) {
+            System.out.println("Error when accessing API");
+            return null;
+        }
+        return availableTaxis;
     }
 }

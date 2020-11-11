@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.*;
 
 public class TaxiRouting {
-    private static List<Taxi> availableTaxis = getAvailableTaxis();
+    private static List<Taxi> availableTaxis = TaxiData.getAvailableTaxis();
     private static Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<Zone>(28);
     private static List<Taxi> assignedTaxis = new ArrayList<>();
     private static List<Zone> zones = new ArrayList<>();
@@ -34,7 +34,6 @@ public class TaxiRouting {
       
         // -------------------------pre processing-------------------------------------
         // create global collection of taxi, taxiCollection
-        availableTaxis = getAvailableTaxis();
         
         // System.out.println("Data check: Number of taxis: " + availableTaxis.size());
         // get all zones (28 zones)
@@ -75,29 +74,14 @@ public class TaxiRouting {
         while (deficitZonesQueue.size() > 0) {
             Zone current = deficitZonesQueue.poll();
             process(current);
+            System.out.println(deficitZonesQueue.toString());
         }
 
+        // meeasure the output of the algorithm
         MeasureOutput.measureOutput(assignedTaxis);
     }
 
-    public static List<Taxi> getAvailableTaxis() {
-        List<Taxi> availableTaxis = new ArrayList<>();
 
-        try {
-            Response response = TaxiData.getData();
-            List<Feature> features = response.getFeatures();
-            Feature feature = features.get(0);
-            List<List<Double>> coordinates = feature.getGeometry().getCoordinates();
-
-            for (int i = 0; i < coordinates.size(); i++) {
-                availableTaxis.add(new Taxi(coordinates.get(i), i));
-            }
-        } catch (Exception e) {
-            System.out.println("Error when accessing API");
-            return null;
-        }
-        return availableTaxis;
-    }
 
     public static void process(Zone zone) {
         // find closest taxis

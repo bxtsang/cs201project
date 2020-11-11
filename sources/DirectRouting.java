@@ -1,10 +1,32 @@
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import data.Taxi;
 import data.Zone;
 
 public class DirectRouting {
+    private static List<Taxi> availableTaxis = TaxiData.getAvailableTaxis();
+    private static List<Taxi> assignedTaxis = new ArrayList<>();
+    private static List<Zone> zones = new ArrayList<>();
+
     public static void main(String[] args) {
+        AddressUtilities.loadAddresses();
+
+        //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
+        Map<Integer, List<Address>> clusteredAddresses = AddressUtilities.initHashMap();
+        HashMap<Integer, Address> referencePoints = new HashMap<>();
+
+        //Populate the HashMap with all Key-Value pairs
+        for (Integer i : clusteredAddresses.keySet()){
+            referencePoints.put(i, AddressUtilities.findReferencePoint(i, clusteredAddresses));
+        }
+
+        for (Taxi t : availableTaxis){
+            AddressUtilities.findNearestZone(t, referencePoints);
+        }
+        //Populate all the zones with taxis - This is only run once by calling updateZones()
+        AddressUtilities.updateZones(zones, referencePoints, availableTaxis);
+
         List<Zone> zonesMock = mockTaxiData();
 
         List<Zone> deficitZones = new ArrayList<>();
@@ -19,6 +41,7 @@ public class DirectRouting {
         List<Zone> surplusZonesDuplicate = new ArrayList<>(surplusZones);
 
         directRouting(deficitZones, surplusZones, surplusZonesDuplicate, neutralZones);
+        MeasureOutput.measureOutput(assignedTaxis);
     }
 
     // Approach 2:
@@ -78,7 +101,8 @@ public class DirectRouting {
             // System.out.print(": Taxi ");
             // System.out.println(taxi.getId());
 
-
+            taxi.setAssignedZone(deficitZone);
+            assignedTaxis.add(taxi);
             surplusZone.removeTaxi(taxi); // modify later to remove only when the surplus is gone
             deficitZone.addTaxi(taxi);
         }

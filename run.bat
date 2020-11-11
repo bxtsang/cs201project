@@ -1,1 +1,1 @@
-java -cp target;libraries/* TaxiRouting
+java -cp target;libraries/* DirectRouting

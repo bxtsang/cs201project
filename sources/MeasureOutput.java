@@ -19,5 +19,6 @@ public class MeasureOutput {
 
         System.out.println("Total distance by all taxis --> " + distance);
         System.out.println("Maximum distance moved by a single taxi --> " + maxDistance);
+        System.out.println("Average distance moved by each taxi --> " + (distance / assignedTaxis.size()));
     }
 }
