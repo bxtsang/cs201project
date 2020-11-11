@@ -15,6 +15,7 @@ public class TaxiRouting {
     private static Queue<Zone> deficitZonesQueue = new ArrayBlockingQueue<Zone>(28);
     private static List<Taxi> assignedTaxis = new ArrayList<>();
     private static List<Zone> zones = new ArrayList<>();
+    private static List<Zone> uZones = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -71,22 +72,33 @@ public class TaxiRouting {
 
         // ----------------------- processing ------------------------
         // while queue is not empty, dequeue and process zone
+        int count = 0;
         while (deficitZonesQueue.size() > 0) {
             Zone current = deficitZonesQueue.poll();
-            process(current);
-            System.out.println(deficitZonesQueue.toString());
+            try {
+                process(current);
+            } catch (NoClosestTaxiException e) {
+                uZones.add(current);
+            }
+            count ++;
+            System.out.println(count);
         }
 
         // meeasure the output of the algorithm
         MeasureOutput.measureOutput(assignedTaxis);
+
+        System.out.println("Number of unfulfilled zones: " + uZones.size());
     }
 
 
 
-    public static void process(Zone zone) {
+    public static void process(Zone zone) throws NoClosestTaxiException {
         // find closest taxis
         for (int i = 0; i < zone.getDeficitAmount(); i++) {
             Taxi closestTaxi = getClosestTaxi(zone, availableTaxis, zones); // implement this, make sure taxis are not from any previously processed zones
+            if (closestTaxi == null) {
+                throw new NoClosestTaxiException();
+            }
             closestTaxi.setAssignedZone(zone);
             closestTaxi.setAssigned(true);
 
@@ -115,7 +127,7 @@ public class TaxiRouting {
         double minimumDistance = Integer.MAX_VALUE;
 
         //Pointer to find the taxi to be returned
-        int indexOfMinDistance = 0;
+        int indexOfMinDistance = -1;
 
         for (int i = 0; i < availableTaxis.size(); i++){
             //For each taxi, if the taxi is not assigned && its zone is not processed, then calculate it's distance from the zone's reference point
@@ -136,6 +148,9 @@ public class TaxiRouting {
             }
         }
 
+        if (indexOfMinDistance == -1) {
+            return null;
+        }
         return availableTaxis.get(indexOfMinDistance);
     }
 

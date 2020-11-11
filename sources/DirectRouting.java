@@ -34,9 +34,13 @@ public class DirectRouting {
         List<Zone> neutralZones = new ArrayList<>();
 
         // Fill three lists above 
-        for (Zone zone : zonesMock) {
+        for (Zone zone : zones) {
             categoriseEachZone(zone, deficitZones, surplusZones, neutralZones);
         }
+
+        System.out.println(deficitZones.size());
+        System.out.println(surplusZones.size());
+        System.out.println(neutralZones.size());
 
         List<Zone> surplusZonesDuplicate = new ArrayList<>(surplusZones);
 

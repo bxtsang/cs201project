@@ -1,1 +1,1 @@
-javac -d target -cp libraries/*;sources sources/DirectRouting.java
+javac -d target -cp libraries/*;sources sources/TaxiRouting.java
