@@ -64,22 +64,31 @@ public class DirectRouting {
         for (Zone deficitZone : deficitZones) {
             int deficit = deficitZone.getDeficitAmount();
 
-            for (Map.Entry<Integer, Integer> entry : surplusMap.entrySet()) {
+            for (int i = 0; i < surplusZonesDuplicate.size(); i++) {
                 int taxisToMove = 0;
-                int surplus = entry.getValue();
+                int surplus = surplusMap.get(i);
+                Zone surplusZone = surplusZonesDuplicate.get(i);
+
                 if (surplus <= deficit) {
                     // eg. surplus has 3 extra taxis, deficit needs 5 more
-                    // put all surplus into deficit, then move surplus to neutral
+                    // put all surplus into deficit, then move surplus zone to neutral
                     taxisToMove = surplus;
+                    surplusZones.remove(surplusZone);
+                    neutralZones.add(surplusZone);
+
                 } else {
                     // surplus > deficit, there will be leftover surplus
                     // leave zone in surplusZones
                     // move deficitZone to neutral
                     taxisToMove = surplus - deficit;
-                } 
-                surplusMap.put(entry.getKey(), surplus - taxisToMove);
-                moveTaxis(taxisToMove, deficitZone, surplusZones.get(entry.getKey()));
+                    deficitZones.remove(deficitZone);
+                    neutralZones.add(deficitZone);
+                }
+
+                surplusMap.put(i, surplus - taxisToMove);
+                moveTaxis(taxisToMove, deficitZone, surplusZone);
             }
+
         }
     }
 
@@ -103,6 +112,15 @@ public class DirectRouting {
 
             taxi.setAssignedZone(deficitZone);
             assignedTaxis.add(taxi);
+            // Debug
+            System.out.print("Taxi ");
+            System.out.print(taxi.getId());
+            System.out.print(": Zone ");
+            System.out.print(surplusZone.getZoneNumber());
+            System.out.print(" -> Zone ");
+            System.out.println(deficitZone.getZoneNumber());
+
+            taxi.setZone(deficitZone);
             surplusZone.removeTaxi(taxi); // modify later to remove only when the surplus is gone
             deficitZone.addTaxi(taxi);
         }
