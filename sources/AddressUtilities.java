@@ -16,7 +16,7 @@ public class AddressUtilities {
      * Given a taxi, find the closest address in the taxi's assigned zone
      * Method also updates the taxi's travelling distance 
      */
-    public static Address findNearestAddress(Taxi taxi,  HashMap<Integer, List<Address>> clusteredAddresses){
+    public static Address findNearestAddress(Taxi taxi){
 
         Zone assignedZone = taxi.getAssignedZone();
         List<Address> addresses = clusteredAddresses.get(assignedZone.getZoneNumber());
