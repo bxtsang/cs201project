@@ -20,10 +20,11 @@ public class Zone {
         this.referenceLongitude = coordinates.get(1);
     }
 
-    public Zone(List<Double> coordinates, int demand) {
+    public Zone(List<Double> coordinates, int demand, Integer zoneNumber) {
         this.referenceLatitude = coordinates.get(0);
         this.referenceLongitude = coordinates.get(1);
         this.demand = demand;
+        this.ZoneNumber = zoneNumber;
     }
 
     public Zone(Integer zoneNumber, double referenceLongitude, double referenceLatitude){
