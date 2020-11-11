@@ -114,11 +114,8 @@ public class TaxiRouting {
             Zone current = deficitZonesQueue.poll();
             process(current);
         }
-        // processing zone:
-        // for i in getDeficit, find closest taxi to zone in global collection
-        //    mark taxi as isAssigned, remove taxi from original zone
 
-        //
+        MeasureOutput.measureOutput(assignedTaxis);
     }
 
     public static List<Taxi> getAvailableTaxis() {
@@ -169,7 +166,7 @@ public class TaxiRouting {
         double referenceLat = zone.getReferenceLat();
         
         //Arbitrarily large distance initialized
-        double minimumDistance = 10000000.0;
+        double minimumDistance = Integer.MAX_VALUE;
 
         //Pointer to find the taxi to be returned
         int indexOfMinDistance = 0;
