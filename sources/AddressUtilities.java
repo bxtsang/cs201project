@@ -8,6 +8,8 @@ import data.Taxi;
 import data.Zone;
 
 public class AddressUtilities {
+    private static ArrayList<Address> supportingAddresses = new ArrayList<>();
+    private static Map<Integer, List<Address>> clusteredAddresses;
 
 
     /**
@@ -107,7 +109,7 @@ public class AddressUtilities {
      * @param clusteredAddresses A HashMap of all the addresses
      * @return 
      */
-    public static Address findReferencePoint(Integer clusterNumber, HashMap<Integer, List<Address>> clusteredAddresses){
+    public static Address findReferencePoint(Integer clusterNumber, Map<Integer, List<Address>> clusteredAddresses){
 
         if (!clusteredAddresses.containsKey(clusterNumber)){
             //Cluster not found - Exception can be written if necessary
@@ -135,18 +137,15 @@ public class AddressUtilities {
 
     /**
      * Method is used to create a HashMap where the Key is the Zone/Cluster number, and the values will be all the addresses that falls within the cluster
-     * @param myAddresses Supporting dataset to define the clusters within Singapore
      * @return 
      */
-    public static HashMap<Integer, List<Address>> initHashMap(ArrayList<Address> myAddresses){
+    public static Map<Integer, List<Address>> initHashMap(){
         //Since the address dataset is already pre-sorted in the ascending order based on clusters, currentCluster will be #1
-        Integer currentCluster = myAddresses.get(0).getClusterNumber();
+        Integer currentCluster = supportingAddresses.get(0).getClusterNumber();
         List<Address> tempList = new ArrayList<>();
 
-        HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>();
-
         //For every address that is given, if the address' cluster number matches the initialized value, add it into the list
-        for (Address anAddress: myAddresses){
+        for (Address anAddress: supportingAddresses){
             if (currentCluster == anAddress.getClusterNumber()){
                 tempList.add(anAddress);
             } else {
@@ -178,9 +177,8 @@ public class AddressUtilities {
 
     /**
      * Method to load addresses from the CSV file (Supporting dataset)
-     * @param myAddresses Variable to store the lines of addresses that are to be read
      */    
-    public static void loadAddresses(ArrayList<Address> myAddresses) {
+    public static void loadAddresses() {
 
         Scanner sc = null;
 
@@ -194,7 +192,7 @@ public class AddressUtilities {
                 double lat = sc.nextDouble();
                 int clusterNum = sc.nextInt();
                 Address oneAddress = new Address(lon, lat, clusterNum);
-                myAddresses.add(oneAddress);
+                supportingAddresses.add(oneAddress);
             }
         } catch (IOException e) {
             e.printStackTrace();

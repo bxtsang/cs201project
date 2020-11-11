@@ -17,14 +17,12 @@ public class TaxiRouting {
     private static List<Zone> zones = new ArrayList<>();
 
     public static void main(String[] args) {
-        HashMap<Integer, List<Address>> clusteredAddresses = new HashMap<>(); 
 
         //Load all supporting dataset into arrayList
-        ArrayList<Address> supportingAddresses = new ArrayList<>();
-        AddressUtilities.loadAddresses(supportingAddresses);
+        AddressUtilities.loadAddresses();
 
         //Initialize a HashMap of key-value pairs of ZoneNumber & all its addresses
-        clusteredAddresses = AddressUtilities.initHashMap(supportingAddresses);
+        Map<Integer, List<Address>> clusteredAddresses = AddressUtilities.initHashMap();
         HashMap<Integer, Address> referencePoints = new HashMap<>();
         
         //Populate the HashMap with all Key-Value pairs
