@@ -141,7 +141,6 @@ public class AddressUtilities {
      */
     public static Map<Integer, List<Address>> initHashMap(){
         //Since the address dataset is already pre-sorted in the ascending order based on clusters, currentCluster will be #1
-        System.out.println(supportingAddresses.get(0).toString());
         Integer currentCluster = supportingAddresses.get(0).getClusterNumber();
         List<Address> tempList = new ArrayList<>();
 
@@ -169,7 +168,7 @@ public class AddressUtilities {
 
         // prints all cluster numbers and their taxi counts
         for (Map.Entry<Integer, List<Address>> e: clusteredAddresses.entrySet()) {
-            System.out.println("cluster number = " + e.getKey() + ", count = " + e.getValue().size());
+//            System.out.println("cluster number = " + e.getKey() + ", count = " + e.getValue().size());
         }
 
         return clusteredAddresses;
